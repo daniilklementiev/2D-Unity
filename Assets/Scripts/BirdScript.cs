@@ -11,6 +11,7 @@ public class BirdScript : MonoBehaviour
 
     void Start()
     { 
+		GameState.gameRunning = true;
 		body = this.GetComponent<Rigidbody2D>();
 		GameState.pipesPassed = 0;
 		GameState.vitality = 0.85f;
@@ -48,6 +49,8 @@ public class BirdScript : MonoBehaviour
 		if(transformParent != null && transformParent.gameObject.CompareTag("Pipe"))
 		{
 			// Pipe trigger
+			GameState.isPipeHitted = true;
+			GameState.gameRunning = false;
 		}
 		if (other.gameObject.CompareTag("Food")) 
 		{

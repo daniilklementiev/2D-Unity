@@ -8,7 +8,6 @@ public class MenuScript : MonoBehaviour
 {
     [SerializeField]
     private GameObject content;
-    private bool isMenuShown;
     [SerializeField]
     private Toggle keyWToggle;
     [SerializeField]
@@ -16,11 +15,25 @@ public class MenuScript : MonoBehaviour
     [SerializeField]
     private Slider vitalityPeriod;
 
-    void Start()
+	private bool isMenuShown;
+    private const String settingsFilename = "Assets/Files/settings.json";
+
+	void Start()
     {
-        GameState.isWkeyEnabled = keyWToggle.isOn;
-        OnPipePeriodSlider(pipePeriod.value);
-        OnVitalityPeriodSlider(vitalityPeriod.value);
+        if(LoadSettings()) // if settings file exists
+        {
+            keyWToggle.isOn = GameState.isWkeyEnabled;
+            pipePeriod.value = (6f -GameState.pipeSpawnPeriod) / (6f - 2f);
+            vitalityPeriod.value = (60f - GameState.vitalityPeriod) / (60f - 20f);
+        }
+        else // if settings file does not exist
+        {
+			GameState.isWkeyEnabled = keyWToggle.isOn;
+			OnPipePeriodSlider(pipePeriod.value);
+			OnVitalityPeriodSlider(vitalityPeriod.value);
+		}
+       
+
         isMenuShown = content.activeInHierarchy;
         ToggleMenu(isMenuShown);
     }
@@ -33,7 +46,15 @@ public class MenuScript : MonoBehaviour
         }
     }
 
-    private void ToggleMenu(bool isShown) 
+	private void LateUpdate()
+	{
+		if(GameState.isPipeHitted)
+        {
+            ToggleMenu(true);
+        }
+	}
+
+	private void ToggleMenu(bool isShown) 
     { 
         if(isShown)
         {
@@ -46,6 +67,28 @@ public class MenuScript : MonoBehaviour
             Time.timeScale = 1f;
             isMenuShown = false;
 			content.SetActive(isMenuShown);
+            if (GameState.isPipeHitted)
+            {
+                // --life if pipe hitted
+                foreach (var pipe in GameObject.FindGameObjectsWithTag("Pipe") )
+                {
+                    if (pipe != null)
+                    {
+                        GameObject.Destroy(pipe);
+                    }
+                }
+                foreach(var food in GameObject.FindGameObjectsWithTag("Food"))
+                {
+					if (food != null)
+                    {
+						GameObject.Destroy(food);
+					}
+				}
+                GameState.isPipeHitted = false;
+                GameState.gameTime = 0f;
+                GameState.gameRunning = true;
+                GameState.pipesPassed = 0;
+            }
 		}
     }
 
@@ -57,17 +100,34 @@ public class MenuScript : MonoBehaviour
     public void OnControlWChanged( Boolean value )
     {
         GameState.isWkeyEnabled = value;
+        SaveSettings();
     }
 
     public void OnPipePeriodSlider(Single value)
     {
 		// value[0..1] -> time[6..2]
 		GameState.pipeSpawnPeriod = 6f - value * (6f - 2f);
-	}
+	    SaveSettings();
+    }
 
     public void OnVitalityPeriodSlider(Single value)
     {
 		GameState.vitalityPeriod = 60f - value * (60f - 20f);
-	}
+	    SaveSettings();
+    }
     
+    private bool LoadSettings()
+    {
+        if(System.IO.File.Exists(settingsFilename))
+        {
+			GameState.FromJson(System.IO.File.ReadAllText(settingsFilename));
+			return true;
+		}
+		return false;
+    }
+
+    private void SaveSettings()
+    {
+        System.IO.File.WriteAllText(settingsFilename, GameState.ToJson());
+    }
 }

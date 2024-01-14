@@ -5,7 +5,12 @@ using UnityEngine;
 public class SpawnScript : MonoBehaviour
 {
     [SerializeField]
-    private GameObject pipePrefab;
+    private GameObject pipePrefab1;
+    [SerializeField]
+    private GameObject pipePrefab2;
+    [SerializeField]
+    private GameObject pipePrefab3;
+
     [SerializeField]
     private GameObject foodPrefab;
 	[SerializeField]
@@ -44,13 +49,14 @@ public class SpawnScript : MonoBehaviour
 
     private void SpawnPipe()
     {
-        var pipe = GameObject.Instantiate(pipePrefab);
+        // Take random pipe from 3
+        var pipe = GameObject.Instantiate(Random.value < 0.33f ? pipePrefab1 : Random.value < 0.5f ? pipePrefab2 : pipePrefab3);
         pipe.transform.position = this.transform.position + Vector3.up * Random.Range(-1f, 1f);
     }
 
 	private void SpawnFood()
 	{
 		var food = GameObject.Instantiate(Random.value < 0.5f ? foodPrefab : food2Prefab);
-		food.transform.position = this.transform.position + Vector3.up * Random.Range(-3.7f, 3.7f);
+		food.transform.position = this.transform.position + Vector3.up * Random.Range(-3f, 3f);
 	}
 }

@@ -4029,7 +4029,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a84f7af16340f2442b3df845486c4338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pipePrefab: {fileID: 1261723658688327775, guid: 29de6dff972f19f4dae11ddba5d31671, type: 3}
+  pipePrefab1: {fileID: 5042008233185518673, guid: 01b0c935d8ebaae41adafe36d58ccf07, type: 3}
+  pipePrefab2: {fileID: 4130058774623504875, guid: 8621b0517633c064daa225b653abe7b5, type: 3}
+  pipePrefab3: {fileID: 2338936577256815545, guid: 0db8840c4e4807b4890c9e5cb75d4593, type: 3}
   foodPrefab: {fileID: 2601731595699994175, guid: 006c43c11ffb22640a37ae372f23e5ac, type: 3}
   food2Prefab: {fileID: 4085694506682151931, guid: 65be4cb48f43a0c499957587ad54eccc, type: 3}
 --- !u!1 &1727000851
